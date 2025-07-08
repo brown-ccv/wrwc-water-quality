@@ -38,4 +38,30 @@ Water quality analysis for teh Woonasquatucket River Watershed Coucil
 ```
 
 --------
+## 🔧 Development Setup (with uv)
 
+To set up a development environment using uv, a fast Python package manager:
+
+1. Install uv (if not already installed): [Installing uv](https://docs.astral.sh/uv/getting-started/installation/)
+2. Clone the repository:
+
+    ```bash
+    git clone https://github.com/brown-ccv/wrwc-water-quality.git
+    cd wrwc-water-quality
+    ```
+
+3. Create the virtual environment and install dev dependencies:
+
+    ```bash
+    uv venv
+    source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+    uv pip install -e '.[dev]'
+    ```
+    > ⚙️ This installs the package in editable mode with development dependencies 
+   > defined in pyproject.toml. The local source code is installed and changes 
+   > take effect immediately.
+
+4. Verify the installation (optional):
+    ```bash
+    pytest
+    ```
