@@ -16,9 +16,7 @@ Water quality analysis for teh Woonasquatucket River Watershed Coucil
 │   ├── processed      <- The final, canonical data sets for modeling.
 │   └── raw            <- The original, immutable data dump.
 │
-├── notebooks          <- Jupyter notebooks. Naming convention is a number (for ordering),
-│                         the creator's initials, and a short `-` delimited description, e.g.
-│                         `1.0-jqp-initial-data-exploration`.
+├── notebooks          <- Jupyter notebooks
 │
 ├── pyproject.toml     <- Project configuration file with package metadata for 
 │                         wrwc and configuration for tools like black
