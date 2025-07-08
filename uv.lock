@@ -1881,18 +1881,22 @@ dependencies = [
     { name = "jupyterlab" },
     { name = "loguru" },
     { name = "matplotlib" },
-    { name = "mkdocs" },
     { name = "notebook" },
     { name = "numpy" },
     { name = "pandas" },
     { name = "pip" },
     { name = "plotly" },
-    { name = "pytest" },
     { name = "python-dotenv" },
-    { name = "ruff" },
     { name = "scikit-learn" },
     { name = "tqdm" },
     { name = "typer" },
+]
+
+[package.optional-dependencies]
+dev = [
+    { name = "mkdocs" },
+    { name = "pytest" },
+    { name = "ruff" },
 ]
 
 [package.metadata]
@@ -1903,15 +1907,15 @@ requires-dist = [
     { name = "jupyterlab" },
     { name = "loguru" },
     { name = "matplotlib" },
-    { name = "mkdocs" },
+    { name = "mkdocs", marker = "extra == 'dev'" },
     { name = "notebook" },
     { name = "numpy" },
     { name = "pandas" },
     { name = "pip" },
     { name = "plotly", specifier = ">=6.0.1" },
-    { name = "pytest" },
+    { name = "pytest", marker = "extra == 'dev'" },
     { name = "python-dotenv" },
-    { name = "ruff" },
+    { name = "ruff", marker = "extra == 'dev'" },
     { name = "scikit-learn" },
     { name = "tqdm" },
     { name = "typer" },
