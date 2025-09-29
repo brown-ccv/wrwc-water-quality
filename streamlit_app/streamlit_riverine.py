@@ -1,22 +1,13 @@
 import streamlit as st
 from collections import OrderedDict
-from data_processing import (
-    reverse_dict,
+from streamlit_app.data_processing import (
+    sites, site_name_lookup,
     load_map_data,
     load_concentration_data,
     process_monthly_count_data,
     process_temporal_bins
 )
-from figures import site_map, heatmap, plot_timeseries
-
-# Read in site info and coordinates
-sites = OrderedDict([('WW635', 'Whipple Field'),
-                    ('WW437', 'Greystone Pond'),
-                    ('WW226', 'Cricket Park'),
-                    ('WW508', 'Manton Ave.'),
-                    ('WW227', 'Donigian Park'),
-                    ('WW308', 'Waterplace Park')])
-site_name_lookup = reverse_dict(sites)
+from streamlit_app.figures import site_map, heatmap, plot_timeseries
 
 
 @st.cache_data
@@ -84,7 +75,7 @@ def timeseries_section(data, section_key=0):
 
     st.plotly_chart(
         plot_timeseries(
-            df_4year_bins,
+            data,
             site_code=site_name_lookup.get(site_name),
             site_name=site_name,
             parameter=parameter,
