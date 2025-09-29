@@ -7,7 +7,7 @@ from data_processing import (
     process_monthly_count_data,
     process_temporal_bins
 )
-from figures import site_map, heatmap
+from figures import site_map, heatmap, plot_timeseries
 
 # Read in site info and coordinates
 sites = OrderedDict([('WW635', 'Whipple Field'),
@@ -50,6 +50,50 @@ def heatmap_section(counts):
     )
 
 
+@st.fragment
+def timeseries_section(data, section_key=0):
+    # st.dataframe(data)
+    col1, col2 = st.columns(2)
+
+    # Site selection
+    with col1:
+        site_names = [sites[s] for s in data['ww_id'].unique()]
+        site_name = st.selectbox(
+            label='Site',
+            options=site_names,
+            key=f'site_name_{section_key}'
+        )
+
+    # Parameter selection
+    with col2:
+        site_parameters = sorted(
+            data.
+            loc[data['ww_id'] == site_name_lookup[site_name], 'parameter']
+            .unique()
+        )
+        parameter = st.selectbox(
+            label='Parameter',
+            options=site_parameters,
+            key=f'site_parameter_{section_key}'
+        )
+
+        # Checkbox selectors
+        col2_1, col2_2 = st.columns(2)
+        log_scale = col2_1.checkbox('log scale', value=False, key=f'log_scale_{section_key}')
+        min_max = col2_2.checkbox('Min-Max lines', value=False, key=f'min_max_{section_key}')
+
+    st.plotly_chart(
+        plot_timeseries(
+            df_4year_bins,
+            site_code=site_name_lookup.get(site_name),
+            site_name=site_name,
+            parameter=parameter,
+            log=log_scale,
+            minmax=min_max
+        )
+    )
+
+
 df_counts, df_cso_bins, df_4year_bins = get_plot_data()
 
 # Layout
@@ -68,4 +112,10 @@ with st.expander("Site Map", expanded=True):
 
 with st.expander("Sampling Counts", expanded=True):
     heatmap_section(df_counts)
+
+with st.expander("Timeseries 4-year bins", expanded=True):
+    timeseries_section(df_4year_bins)
+
+with st.expander("Timeseries CSO update", expanded=True):
+    timeseries_section(df_cso_bins, section_key=1)
 
