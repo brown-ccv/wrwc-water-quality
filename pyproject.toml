@@ -29,6 +29,7 @@ dependencies = [
     "plotly>=6.0.1",
     "python-dotenv",
     "scikit-learn",
+    "streamlit>=1.50.0",
     "tqdm",
     "typer",
 ]
