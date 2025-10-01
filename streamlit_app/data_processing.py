@@ -78,15 +78,6 @@ def process_temporal_bins(data: pd.DataFrame):
     )
 
     # Aggregate measures across year ranges by month
-    df_mean_cso = (
-        df_temporal
-        .groupby(by=['ww_id', 'parameter', 'unit', 'pre_2015', 'month'], observed=True)[
-            'concentration']
-        .agg(['mean', 'min', 'max', 'count'])
-        .query("ww_id in ['WW227', 'WW308', 'WW437']")
-        .reset_index()
-    )
-
     df_mean_year_range = (
         df_temporal
         .groupby(by=['ww_id', 'parameter', 'unit', 'year_range', 'month'], observed=True)[
@@ -94,6 +85,19 @@ def process_temporal_bins(data: pd.DataFrame):
         .agg(['mean', 'min', 'max', 'count'])
         .query("ww_id not in ['WW508']")
         .reset_index()
+    )
+
+    df_mean_cso = (
+        df_temporal
+        .groupby(by=['ww_id', 'parameter', 'unit', 'pre_2015', 'month'], observed=True)[
+            'concentration']
+        .agg(['mean', 'min', 'max', 'count'])
+        .query("ww_id in ['WW227', 'WW308', 'WW437']")
+        .reset_index()
+        .sort_values(
+            by=['ww_id', 'parameter', 'unit', 'pre_2015', 'month'],
+            ascending=[True, True, True, False, True]
+        )
     )
 
     return df_mean_cso, df_mean_year_range
