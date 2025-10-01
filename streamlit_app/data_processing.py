@@ -54,7 +54,7 @@ def process_monthly_count_data(data: pd.DataFrame, sites: dict[str, str]):
     counts = (
         data
         .groupby(['parameter', 'ww_id'])
-        .resample("MS")
+        .resample("MS", include_groups=False)
         .size()
         .unstack(fill_value=0)
         .reindex(sites.keys(), level=1)
