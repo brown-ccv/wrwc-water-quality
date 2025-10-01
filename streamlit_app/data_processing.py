@@ -8,6 +8,7 @@ from wrwc.config import RAW_DATA_DIR, PROCESSED_DATA_DIR, EXTERNAL_DATA_DIR
 def reverse_dict(dictionary: OrderedDict):
     return OrderedDict([(name, code) for code, name in dictionary.items()])
 
+
 # Read in site info and coordinates
 sites = OrderedDict([('WW635', 'Whipple Field'),
                     ('WW437', 'Greystone Pond'),
@@ -16,6 +17,7 @@ sites = OrderedDict([('WW635', 'Whipple Field'),
                     ('WW227', 'Donigian Park'),
                     ('WW308', 'Waterplace Park')])
 site_name_lookup = reverse_dict(sites)
+
 
 def load_map_data(sites: dict[str, str]):
     df_site = (pd.read_csv(PROCESSED_DATA_DIR / 'site_summary_20250424.csv')
@@ -100,4 +102,4 @@ def process_temporal_bins(data: pd.DataFrame):
         )
     )
 
-    return df_mean_cso, df_mean_year_range
+    return df_mean_year_range, df_mean_cso
