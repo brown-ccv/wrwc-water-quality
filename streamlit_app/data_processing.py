@@ -71,7 +71,7 @@ def process_temporal_bins(data: pd.DataFrame):
         .assign(
             pre_2015=lambda x: ['pre' if year < 2015 else 'post' for year in x['date'].dt.year],
             year_range=pd.cut(data['date'].dt.year, bins=bins, labels=labels,
-                              include_lowest=True),
+                              include_lowest=True, right=False),
             year=data['date'].dt.year,
             month=data['date'].dt.month
         )
