@@ -41,7 +41,12 @@ def load_concentration_data(sites: dict[str, str]):
     wq_data = (
         pd.read_csv(PROCESSED_DATA_DIR / "wrwc-processed-data-20250501.csv", parse_dates=['date'])
         .query(f"ww_id in {list(sites.keys())}")
-        .set_index('date'))
+        .set_index('date')
+    )
+
+    # Standardize unit for Fecal Coliforms
+    wq_data.loc[wq_data['parameter'] == 'Fecal Coliform', 'unit'] = 'MPN/100ml'
+
     return wq_data
 
 
