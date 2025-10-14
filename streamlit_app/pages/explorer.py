@@ -48,3 +48,7 @@ with st.expander("Site Map", expanded=True):
 
 with st.expander("Sampling Counts", expanded=True):
     heatmap_section(df_counts)
+
+    # Padding at the bottom of the page to prevent browser auto scroll anchoring
+    # issues in firefox and safari.
+st.markdown("<div style='height:600px;'></div>", unsafe_allow_html=True)
