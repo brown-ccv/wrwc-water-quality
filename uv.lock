@@ -412,6 +412,22 @@ wheels = [
 ]
 
 [[package]]
+name = "gsw"
+version = "3.6.20"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "numpy" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/eb/39/edd76e26b0c8b8a6bcee0107cbcee5219673bb59f274b757de9f989a0fb1/gsw-3.6.20.tar.gz", hash = "sha256:e528cd6563fdc09b244387bfebf131b01199c20ac248f4e5b4eaf00cded1abe6", size = 2702713 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/1e/d9/18382b8fe6e8736bad967dd4ed8ab2c2deabbb9f6121d9e41265e7317f24/gsw-3.6.20-cp312-cp312-macosx_10_13_x86_64.whl", hash = "sha256:9656dcb42ddeee8134f2bb6d7394928b0b8629634c9e223f9cce7a3c7309597c", size = 2222002 },
+    { url = "https://files.pythonhosted.org/packages/9f/85/3a9ba4372ac4291e38e887ed8dac44c0385d4b72ee967a7858c4c7a48d96/gsw-3.6.20-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:857a1f0804980186514a0690e0f7dbdffd15a17059649771f3d3a84771e8fb8f", size = 2261350 },
+    { url = "https://files.pythonhosted.org/packages/dc/36/c3d845de2e453a01f6b1cb099c63ab63c581814d638890c143d064a33a8d/gsw-3.6.20-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:2b5a143b2993ac150c5b3cb7edf942d1376a20abbc57cc3d8ec4a5a430632890", size = 2400962 },
+    { url = "https://files.pythonhosted.org/packages/8f/f1/5b6999c89b3ea20cd9ac1169e0cd7c820a881ca97d6b34c7899da28a3d17/gsw-3.6.20-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:33ca2560378d1719fa49dcd380ce0c4a261b01cbd2aa865a3c6c99bfb90b5853", size = 2443576 },
+    { url = "https://files.pythonhosted.org/packages/13/ed/419237d32a704e4b4bbfcdec8129fbb381ccdf2e33a2cc7d1153c1a1eaa0/gsw-3.6.20-cp312-cp312-win_amd64.whl", hash = "sha256:719d1983bd97991e4e44c1c725322269fc7019c29abc7a641e6a676f1a54f54e", size = 2180514 },
+]
+
+[[package]]
 name = "h11"
 version = "0.16.0"
 source = { registry = "https://pypi.org/simple" }
@@ -2050,6 +2066,7 @@ version = "0.0.1"
 source = { editable = "." }
 dependencies = [
     { name = "geopandas" },
+    { name = "gsw" },
     { name = "ipython" },
     { name = "ipywidgets" },
     { name = "jupyterlab" },
@@ -2077,6 +2094,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "geopandas", specifier = ">=1.0.1" },
+    { name = "gsw", specifier = ">=3.6.20" },
     { name = "ipython" },
     { name = "ipywidgets", specifier = ">=8.1.5" },
     { name = "jupyterlab" },

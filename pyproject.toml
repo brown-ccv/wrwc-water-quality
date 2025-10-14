@@ -17,6 +17,7 @@ classifiers = [
 ]
 dependencies = [
     "geopandas>=1.0.1",
+    "gsw>=3.6.20",
     "ipython",
     "ipywidgets>=8.1.5",
     "jupyterlab",
