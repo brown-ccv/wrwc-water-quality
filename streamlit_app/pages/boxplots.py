@@ -44,10 +44,20 @@ def boxplot_section(data: list[pd.DataFrame], names: list[str]):
             .loc[data[0]['ww_id'] == site_name_lookup[site_name], 'parameter']
             .unique()
         )
+
+        # Determine the default parameter index
+        default_index = 0
+        if 'selected_parameter' in st.session_state:
+            # Check if the previously selected parameter is available for this site
+            if st.session_state.selected_parameter in site_parameters:
+                default_index = site_parameters.index(st.session_state.selected_parameter)
+
         parameter = st.selectbox(
             label='Parameter',
             options=site_parameters,
+            index=default_index
         )
+        st.session_state.selected_parameter = parameter
 
         # Checkbox selectors
         col2_1, col2_2 = st.columns(2)
