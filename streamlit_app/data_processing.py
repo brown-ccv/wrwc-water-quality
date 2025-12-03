@@ -210,3 +210,15 @@ def process_temporal_bins(data: pd.DataFrame):
     )
 
     return df_mean_year_range, df_mean_cso
+
+
+def get_ordered_sites(df):
+    """Defines upstream to downstream site order."""
+    site_order = ["Whipple Field", "Greystone Pond", "Cricket Park",
+                  "Manton Ave.", "Donigian Park", "Waterplace Park"]
+    sort_key = {site: i for i, site in enumerate(site_order)}
+
+    sites_in_data = [sites[s] for s in df['ww_id'].unique()]
+    ordered_sites = sorted(sites_in_data, key=lambda site: sort_key.get(site, float('inf')))
+
+    return ordered_sites

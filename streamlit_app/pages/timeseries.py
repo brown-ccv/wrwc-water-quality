@@ -3,9 +3,9 @@ import streamlit as st
 from streamlit_app.data_processing import (
     sites, site_name_lookup,
     load_concentration_data,
-    process_temporal_bins
+    process_temporal_bins, get_ordered_sites
 )
-from streamlit_app.figures import plot_timeseries, get_ordered_sites
+from streamlit_app.figures import plot_timeseries
 
 
 @st.cache_data
