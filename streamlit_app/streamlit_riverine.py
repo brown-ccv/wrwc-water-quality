@@ -6,7 +6,7 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
-pg = st.navigation(["pages/explorer.py", "pages/timeseries.py", "pages/boxplots.py"], expanded=True)
+pg = st.navigation(["pages/explorer.py", "pages/boxplots.py", "pages/timeseries.py"], expanded=True)
 pg.run()
 
 
