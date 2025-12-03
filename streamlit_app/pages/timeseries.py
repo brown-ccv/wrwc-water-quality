@@ -5,7 +5,7 @@ from streamlit_app.data_processing import (
     load_concentration_data,
     process_temporal_bins
 )
-from streamlit_app.figures import plot_timeseries
+from streamlit_app.figures import plot_timeseries, get_ordered_sites
 
 
 @st.cache_data
@@ -14,18 +14,6 @@ def get_plot_data():
     df_4year_bin, df_cso_bin = process_temporal_bins(wq_data)
 
     return df_4year_bin, df_cso_bin
-
-
-def get_ordered_sites(df):
-    """Defines upstream to downstream site order."""
-    site_order = ["Whipple Field", "Greystone Pond", "Cricket Park",
-                  "Manton Ave.", "Donigian Park", "Waterplace Park"]
-    sort_key = {site: i for i, site in enumerate(site_order)}
-
-    sites_in_data = [sites[s] for s in df['ww_id'].unique()]
-    ordered_sites = sorted(sites_in_data, key=lambda site: sort_key.get(site, float('inf')))
-
-    return ordered_sites
 
 
 @st.fragment
