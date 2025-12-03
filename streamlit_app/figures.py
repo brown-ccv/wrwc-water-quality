@@ -131,6 +131,14 @@ def plot_timeseries(df_mean, site_code, site_name, parameter, log=False, minmax=
     return fig
 
 
-def plot_boxplot():
-    ...
+def plot_boxplot(df, site_code, site_name, parameter, log=False, all_points=False):
+    unit = get_unit(df)
+    point_display = ('all' if all_points else 'outliers')
+
+    fig = px.box(df, x='month', y='concentration',
+                 log_y=log, points=point_display,
+                 labels={'concentration': f"{parameter} ({unit})", 'month': 'Month'},
+                 hover_data={'date': '|%Y-%m-%d', 'concentration': True, 'month': False},
+                 title=f'Site: {site_name}, {site_code}')
+    return fig
 
