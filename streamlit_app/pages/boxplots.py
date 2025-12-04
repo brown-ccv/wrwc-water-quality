@@ -5,7 +5,7 @@ from streamlit_app.data_processing import (
     load_concentration_data,
     get_ordered_sites
 )
-from streamlit_app.figures import plot_boxplot
+from streamlit_app.figures import plot_boxplot, get_parameter_index
 
 
 @st.cache_data
@@ -44,20 +44,16 @@ def boxplot_section(data: list[pd.DataFrame], names: list[str]):
             .loc[data[0]['ww_id'] == site_name_lookup[site_name], 'parameter']
             .unique()
         )
-
-        # Determine the default parameter index
-        default_index = 0
-        if 'selected_parameter' in st.session_state:
-            # Check if the previously selected parameter is available for this site
-            if st.session_state.selected_parameter in site_parameters:
-                default_index = site_parameters.index(st.session_state.selected_parameter)
-
         parameter = st.selectbox(
             label='Parameter',
             options=site_parameters,
-            index=default_index
+            index=get_parameter_index(site_parameters, site_name)
         )
-        st.session_state.selected_parameter = parameter
+        # Update session state
+        st.session_state.update({
+            'selected_parameter': parameter,
+            'selected_site': site_name
+        })
 
         # Checkbox selectors
         col2_1, col2_2 = st.columns(2)

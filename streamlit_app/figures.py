@@ -1,5 +1,6 @@
 import plotly.express as px
 import plotly.graph_objects as go
+import streamlit as st
 
 
 def site_map(gdf, df_cso):
@@ -142,3 +143,19 @@ def plot_boxplot(df, site_code, site_name, parameter, log=False, all_points=Fals
                  title=f'Site: {site_name}, {site_code}')
     return fig
 
+
+def get_parameter_index(site_parameters: list[str], current_site: str) -> int:
+    """
+    Determine the default parameter index, preserving selection across site changes when possible.
+    """
+    # Check if site has changed
+    previous_site = st.session_state.get('selected_site')
+    previous_parameter = st.session_state.get('selected_parameter')
+
+    site_changed = previous_site != current_site
+    parameter_available = previous_parameter in site_parameters
+
+    if site_changed and parameter_available:
+        return site_parameters.index(previous_parameter)
+
+    return 0  # Default to first parameter
