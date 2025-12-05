@@ -5,7 +5,7 @@ from streamlit_app.data_processing import (
     load_concentration_data,
     get_ordered_sites
 )
-from streamlit_app.figures import plot_boxplot, get_parameter_index, get_site_index
+from streamlit_app.figures import plot_boxplot
 
 
 @st.cache_data
@@ -27,42 +27,63 @@ def get_year_range_text(df):
 
 @st.fragment
 def boxplot_section(data: list[pd.DataFrame], names: list[str]):
+    page = 'box'
+    df0 = data[0]
+    sites_list = get_ordered_sites(df0)
+
+    # Initialize state
+    st.session_state.setdefault(
+        f"{page}_site_store",
+        sites_list[0]
+    )
+
+    initial_params = sorted(
+        df0.loc[
+            df0['ww_id'] == site_name_lookup[st.session_state[f'{page}_site_store']],
+            'parameter'
+        ].unique()
+    )
+    st.session_state.setdefault(
+        f"{page}_param_store",
+        initial_params[0]
+    )
+
+    # Display
     st.header('Boxplots')
     col1, col2 = st.columns(2)
 
     # Site selection
     with col1:
-        sites = get_ordered_sites(data[0])
         site_name = st.selectbox(
             label='Site',
-            options=sites,
-            index=get_site_index(
-                sites,
-                state_site_variable='selected_site_box'
-            )
+            options=sites_list,
+            key=f"{page}_site",
+            index=sites_list.index(st.session_state[f"{page}_site_store"])
         )
+    st.session_state[f"{page}_site_store"] = site_name
 
     # Parameter selection
+    site_parameters = sorted(
+        df0.loc[
+            df0['ww_id'] == site_name_lookup[st.session_state[f'{page}_site_store']],
+            'parameter'
+        ].unique()
+    )
+
+    # Only reset if invalid
+    if st.session_state[f"{page}_param_store"] not in site_parameters:
+        st.session_state[f"{page}_param_store"] = site_parameters[0]
+
     with col2:
-        site_parameters = sorted(
-            data[0]
-            .loc[data[0]['ww_id'] == site_name_lookup[site_name], 'parameter']
-            .unique()
-        )
         parameter = st.selectbox(
             label='Parameter',
             options=site_parameters,
-            index=get_parameter_index(
-                site_parameters, site_name,
-                state_site_variable='selected_site_box',
-                state_param_variable='selected_parameter_box',
+            key=f"{page}_param_widget",
+            index=site_parameters.index(
+                st.session_state[f"{page}_param_store"]
             )
         )
-        # Update session state
-        st.session_state.update({
-            'selected_site_box': site_name,
-            'selected_parameter_box': parameter,
-        })
+        st.session_state[f"{page}_param_store"] = parameter
 
         # Checkbox selectors
         col2_1, col2_2 = st.columns(2)
