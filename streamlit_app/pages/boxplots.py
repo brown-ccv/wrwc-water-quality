@@ -5,7 +5,7 @@ from streamlit_app.data_processing import (
     load_concentration_data,
     get_ordered_sites
 )
-from streamlit_app.figures import plot_boxplot, get_parameter_index
+from streamlit_app.figures import plot_boxplot, get_parameter_index, get_site_index
 
 
 @st.cache_data
@@ -32,9 +32,14 @@ def boxplot_section(data: list[pd.DataFrame], names: list[str]):
 
     # Site selection
     with col1:
+        sites = get_ordered_sites(data[0])
         site_name = st.selectbox(
             label='Site',
-            options=get_ordered_sites(data[0]),
+            options=sites,
+            index=get_site_index(
+                sites,
+                state_site_variable='selected_site_box'
+            )
         )
 
     # Parameter selection
@@ -47,12 +52,16 @@ def boxplot_section(data: list[pd.DataFrame], names: list[str]):
         parameter = st.selectbox(
             label='Parameter',
             options=site_parameters,
-            index=get_parameter_index(site_parameters, site_name)
+            index=get_parameter_index(
+                site_parameters, site_name,
+                state_site_variable='selected_site_box',
+                state_param_variable='selected_parameter_box',
+            )
         )
         # Update session state
         st.session_state.update({
-            'selected_parameter': parameter,
-            'selected_site': site_name
+            'selected_site_box': site_name,
+            'selected_parameter_box': parameter,
         })
 
         # Checkbox selectors

@@ -144,13 +144,33 @@ def plot_boxplot(df, site_code, site_name, parameter, log=False, all_points=Fals
     return fig
 
 
-def get_parameter_index(site_parameters: list[str], current_site: str) -> int:
+def get_site_index(
+        sites: list[str],
+        state_site_variable,
+) -> int:
+    """
+    Determine the default parameter index, preserving selection across site changes when possible.
+    """
+    # Check there is a previous site selected
+    previous_site = st.session_state.get(state_site_variable)
+    if previous_site:
+        return sites.index(previous_site)
+
+    return 0  # Default to first parameter
+
+
+def get_parameter_index(
+        site_parameters: list[str],
+        current_site: str,
+        state_site_variable,
+        state_param_variable
+) -> int:
     """
     Determine the default parameter index, preserving selection across site changes when possible.
     """
     # Check if site has changed
-    previous_site = st.session_state.get('selected_site')
-    previous_parameter = st.session_state.get('selected_parameter')
+    previous_site = st.session_state.get(state_site_variable)
+    previous_parameter = st.session_state.get(state_param_variable)
 
     site_changed = previous_site != current_site
     parameter_available = previous_parameter in site_parameters
