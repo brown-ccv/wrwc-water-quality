@@ -54,8 +54,8 @@ To set up a development environment using uv, a fast Python package manager:
 
     ```bash
     uv venv
+    uv sync
     source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-    uv pip install -e '.[dev]'
     ```
     > ⚙️ This installs the package in editable mode with development dependencies 
    > defined in pyproject.toml. The local source code is installed and changes 
