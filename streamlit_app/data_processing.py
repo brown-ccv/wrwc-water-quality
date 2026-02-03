@@ -21,7 +21,7 @@ site_name_lookup = reverse_dict(sites)
 
 
 def load_map_data(sites: dict[str, str]):
-    df_site = (pd.read_csv(PROCESSED_DATA_DIR / 'site_summary_20250424.csv')
+    df_site = (pd.read_csv(PROCESSED_DATA_DIR / 'site_summary_20250708.csv')
                .query(f"ww_id in {list(sites.keys())}")
                .rename(columns={'lon_dd': 'lon', 'lat_dd': 'lat'})
                )
