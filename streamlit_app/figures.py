@@ -128,6 +128,8 @@ def plot_timeseries(df_mean, site_code, site_name, parameter, log=False, minmax=
             fig.add_hline(y=9.0, line_dash="dash", line_color="red")
         case 'Dissolved Oxygen':
             fig.add_hline(y=5.0, line_dash="dash", line_color="red")
+        case 'Dissolved Oxygen Saturation':
+            fig.add_hline(y=60, line_dash="dash", line_color="red")
 
     return fig
 
