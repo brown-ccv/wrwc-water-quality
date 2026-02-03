@@ -4,9 +4,8 @@ from streamlit_app.data_processing import (
     load_map_data,
     load_concentration_data,
     process_monthly_count_data,
-    process_temporal_bins
 )
-from streamlit_app.figures import site_map, heatmap, plot_timeseries
+from streamlit_app.figures import site_map, heatmap
 
 
 @st.cache_data

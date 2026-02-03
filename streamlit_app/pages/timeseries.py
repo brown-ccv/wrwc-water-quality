@@ -3,7 +3,7 @@ import streamlit as st
 from streamlit_app.data_processing import (
     sites, site_name_lookup,
     load_concentration_data,
-    process_temporal_bins
+    process_temporal_bins, get_ordered_sites
 )
 from streamlit_app.figures import plot_timeseries
 
@@ -16,42 +16,65 @@ def get_plot_data():
     return df_4year_bin, df_cso_bin
 
 
-def get_ordered_sites(df):
-    """Defines upstream to downstream site order."""
-    site_order = ["Whipple Field", "Greystone Pond", "Cricket Park",
-                  "Manton Ave.", "Donigian Park", "Waterplace Park"]
-    sort_key = {site: i for i, site in enumerate(site_order)}
-
-    sites_in_data = [sites[s] for s in df['ww_id'].unique()]
-    ordered_sites = sorted(sites_in_data, key=lambda site: sort_key.get(site, float('inf')))
-
-    return ordered_sites
-
-
 @st.fragment
 def timeseries_section(data: list[pd.DataFrame], names: list[str]):
+    page = 'timeseries'
+    df0 = data[0]
+    sites_list = get_ordered_sites(df0)
+
+    # Initialize state
+    st.session_state.setdefault(
+        f"{page}_site_store",
+        sites_list[0]
+    )
+
+    initial_params = sorted(
+        df0.loc[
+            df0['ww_id'] == site_name_lookup[st.session_state[f'{page}_site_store']],
+            'parameter'
+        ].unique()
+    )
+    st.session_state.setdefault(
+        f"{page}_param_store",
+        initial_params[0]
+    )
+
+    # Display
     st.header('Timeseries')
     col1, col2 = st.columns(2)
 
     # Site selection
     with col1:
-        site_names = [sites[s] for s in data[0]['ww_id'].unique()]
         site_name = st.selectbox(
             label='Site',
-            options=get_ordered_sites(data[0]),
+            options=sites_list,
+            key=f"{page}_site",
+            index=sites_list.index(st.session_state[f"{page}_site_store"])
         )
+    st.session_state[f"{page}_site_store"] = site_name
 
     # Parameter selection
+    site_parameters = sorted(
+        df0.loc[
+            df0['ww_id'] == site_name_lookup[st.session_state[f'{page}_site_store']],
+            'parameter'
+        ].unique()
+    )
+
+    # Only reset if invalid
+    if st.session_state[f"{page}_param_store"] not in site_parameters:
+        st.session_state[f"{page}_param_store"] = site_parameters[0]
+
     with col2:
-        site_parameters = sorted(
-            data[0]
-            .loc[data[0]['ww_id'] == site_name_lookup[site_name], 'parameter']
-            .unique()
-        )
         parameter = st.selectbox(
             label='Parameter',
             options=site_parameters,
+            key=f"{page}_param_widget",
+            index=site_parameters.index(
+                st.session_state[f"{page}_param_store"]
+            )
         )
+        st.session_state[f"{page}_param_store"] = parameter
 
         # Checkbox selectors
         col2_1, col2_2 = st.columns(2)
