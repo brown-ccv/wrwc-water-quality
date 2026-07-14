@@ -12,14 +12,16 @@ def reverse_dict(dictionary: OrderedDict):
 sites = OrderedDict([('WW635', 'Whipple Field'),
                     ('WW437', 'Greystone Pond'),
                     ('WW226', 'Cricket Park'),
+                    ('WW657', 'Manton Dam Fish Ladder'),
                     ('WW508', 'Manton Ave.'),
+                    ('WW659', 'Riverside Park Dam'),
                     ('WW227', 'Donigian Park'),
                     ('WW308', 'Waterplace Park')])
 site_name_lookup = reverse_dict(sites)
 
 
 def load_map_data(sites: dict[str, str]):
-    df_site = (pd.read_csv(PROCESSED_DATA_DIR / 'site_summary_20250708.csv')
+    df_site = (pd.read_csv(PROCESSED_DATA_DIR / 'site_summary_20260714.csv')
                .query(f"ww_id in {list(sites.keys())}")
                .rename(columns={'lon_dd': 'lon', 'lat_dd': 'lat'})
                )
@@ -61,8 +63,8 @@ def process_monthly_count_data(data: pd.DataFrame, sites: dict[str, str]):
 
 
 def process_temporal_bins(data: pd.DataFrame):
-    bins = [1990, 2003, 2007, 2011, 2015, 2019, 2022]  # End points of intervals
-    labels = ['<2003', '2003-2006', '2007-2010', '2011-2014', '2015-2018', '2019-2021']
+    bins = [1990, 2003, 2007, 2011, 2015, 2019, 2023, 2024]  # End points of intervals
+    labels = ['<2003', '2003-2006', '2007-2010', '2011-2014', '2015-2018', '2019-2022', '2023-2024']
     data = data.reset_index()
     df_temporal = (
         data
@@ -104,7 +106,8 @@ def process_temporal_bins(data: pd.DataFrame):
 def get_ordered_sites(df):
     """Defines upstream to downstream site order."""
     site_order = ["Whipple Field", "Greystone Pond", "Cricket Park",
-                  "Manton Ave.", "Donigian Park", "Waterplace Park"]
+                  "Manton Dam Fish Ladder", "Manton Ave.", "'Riverside Park Dam'"
+                  "Donigian Park", "Waterplace Park"]
     sort_key = {site: i for i, site in enumerate(site_order)}
 
     sites_in_data = [sites[s] for s in df['ww_id'].unique()]
