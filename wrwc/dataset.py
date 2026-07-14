@@ -1,9 +1,115 @@
 from datetime import datetime
 import pandas as pd
+import numpy as np
 from pathlib import Path
 from loguru import logger
 from functools import partial
+from gsw import O2sol
 from wrwc.config import PROCESSED_DATA_DIR, RAW_DATA_DIR
+
+
+def calculate_dissolved_oxygen_saturation(df):
+    def _fill_temperature_values(df_wide):
+        """
+        Interpolate missing temperature
+        The sites are grouped by site and month. The missing value are interpolated
+        between years at the same site and during the same month. e.g. if
+        May 2008 was missing it would use the average between May 2007 and 2009.
+        """
+
+        def _interpolate_temperature(group):
+            group = group.set_index('year')
+            group['Temperature'] = group['Temperature'].interpolate(method='linear')
+            return group
+
+        # groupby site and month
+        gb_site_month = (
+            df_wide
+            .reset_index()
+            .assign(month=lambda x: x['date'].dt.month,
+                    year=lambda x: x['date'].dt.year)
+            .groupby(by=['ww_id', 'month'])
+        )
+        # Interpolate temperature
+        df_interp = (
+            gb_site_month
+            .apply(_interpolate_temperature, include_groups=True)
+            .reset_index(drop=True)
+            .sort_values(by=['ww_id', 'date'])
+        )
+        return df_interp
+
+    def _fill_salinity_values(df_wide):
+        """
+        Fill NA salinity values. Median salinity for brackish site and 0 for freshwater
+        """
+
+        m_brackish_sites = df_wide['ww_id'] == 'WW308'
+        median_salinity = df_wide.loc[m_brackish_sites, 'Salinity, (ppt)'].median()
+
+        # 1. Fill Brackish Site (WW308) NAs with the median
+        df_wide.loc[m_brackish_sites, 'Salinity, (ppt)'] = (
+            df_wide.loc[m_brackish_sites, 'Salinity, (ppt)'].fillna(median_salinity))
+
+        # 2. Fill all other NAs (for freshwater sites) with 0
+        df_wide.loc[~m_brackish_sites, 'Salinity, (ppt)'] = (
+            df_wide.loc[~m_brackish_sites, 'Salinity, (ppt)'].fillna(0.))
+
+        return df_wide
+
+    def _dissolved_oxygen_saturation(df_wide):
+        """ Calculates dissovled oxygen saturation """
+
+        # Calculate maximum dissolved oxygen at salinity, pressure, and temperature
+        N = len(df_wide)
+        df_wide['do_max'] = O2sol(
+            SA=df_wide['Salinity, (ppt)'],  # Assumes ppt is close enough to SA in g/kg
+            CT=df_wide['Temperature'],
+            p=np.repeat(0, N),  # Assume 1 atm
+            lat=np.repeat(41.8246, N),  # Providence coordinates
+            lon=np.repeat(-71.418884, N),
+        ) * (31.998 * 1e-3)  # Convert from umol/kg to mg/l
+
+        # Calculate dissolved oxygen saturation
+        df_do_saturation = (
+            df_wide
+            .assign(do_sat=df_wide['Dissolved Oxygen'] / df_wide['do_max'] * 100,
+                    sample_type='Water',
+                    depth=0.0,
+                    parameter='Dissolved Oxygen Saturation',
+                    unit='percent')
+            .drop(columns=['Salinity, (ppt)', 'Temperature', 'month', 'Dissolved Oxygen', 'do_max'])
+            .rename(columns={'do_sat': 'concentration'})
+            .dropna(subset=['concentration'])
+            .set_index('date')
+        )
+        return df_do_saturation
+
+    # Process dataframe for calculations
+    m = df['parameter'].isin(['Dissolved Oxygen', 'Temperature', 'Salinity, (ppt)'])
+    ...
+    df_do = (
+        df
+        .loc[m, ['ww_id', 'date', 'parameter', 'concentration']]
+        .reset_index()
+        .pivot_table(
+            index=['ww_id', 'date'],
+            columns='parameter',
+            values='concentration'
+        )
+    )
+
+    # Fill in missing values
+    df_interp = _fill_temperature_values(df_do)
+    df_interp = _fill_salinity_values(df_interp)
+
+    # Calculate dissolved oxygen saturation
+    df_do_sat = _dissolved_oxygen_saturation(df_interp).reset_index(drop=False)
+
+    # Append calculated values
+    df_out = pd.concat([df, df_do_sat], axis=0, ignore_index=False)
+
+    return df_out
 
 
 def concentration_data(
@@ -74,6 +180,13 @@ def concentration_data(
             how="left",
         )
     )
+
+    # Standardize unit for Fecal Coliforms
+    df_data.loc[df_data['parameter'] == 'Fecal Coliform', 'unit'] = 'MPN/100ml'
+
+    # Calculate dissolved oxygen concentration
+    df_data = calculate_dissolved_oxygen_saturation(df_data)
+
     logger.success("Processing dataset complete.")
 
     date_str = datetime.now().strftime("%Y%m%d")
@@ -162,4 +275,4 @@ def mapping_data(
 
 
 if __name__ == "__main__":
-    mapping_data()
+    concentration_data()
