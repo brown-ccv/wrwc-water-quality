@@ -113,7 +113,7 @@ def calculate_dissolved_oxygen_saturation(df):
 
 
 def concentration_data(
-    input_path: Path = RAW_DATA_DIR / "WoonasquatucketData.csv",
+    input_path: Path = RAW_DATA_DIR / "WoonasquatucketData_through_2024.csv",
     output_path: Path = PROCESSED_DATA_DIR,
 ):
     """
@@ -214,7 +214,7 @@ def list_to_string(l: list, wrap: int = 4):
 
 
 def mapping_data(
-    input_path: Path = PROCESSED_DATA_DIR / "wrwc-processed-data-20250501.csv",
+    input_path: Path = PROCESSED_DATA_DIR / "wrwc-processed-data-20260714.csv",
     output_path: Path = PROCESSED_DATA_DIR,
 ):
     """
@@ -276,3 +276,4 @@ def mapping_data(
 
 if __name__ == "__main__":
     concentration_data()
+    mapping_data()
